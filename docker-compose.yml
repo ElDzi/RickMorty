@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  server:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - rickmorty-net
+    depends_on:
+      - mariadb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/rick_and_morty_db?useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: toor
+    command: [ "java", "-jar", "/app.jar", "--downloadCharacters" ]
+    volumes:
+      - .m2:/root/.m2
+
+  mariadb:
+    image: mariadb:latest
+    networks:
+      - rickmorty-net
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: toor
+      MARIADB_DATABASE: rick_and_morty_db
+      MARIADB_PASSWORD: toor
+      MARIADB_USER: root
+
+networks:
+  rickmorty-net:
